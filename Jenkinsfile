@@ -37,18 +37,19 @@ pipeline {
                                 Copy-Item -Destination "$env:DEPLOY_PATH" -Recurse -Force -Credential \$creds -Verbose
                         """
                         
-                        bat """
-                            ssh $env:USER@$env:WIN_IP ^"
-                                set PM2_HOME=C:\\Users\\$env:USER\\.pm2
-                                pm2 restart app.js
-                            ^"
-                            """
                         // Step 2: Install dependencies and restart app
                         bat """
                             ssh $env:USER@$env:WIN_IP ^"
                                 cd $env:DEPLOY_PATH
+                                set PM2_HOME=C:\\Users\\$env:USER\\.pm2
                                 pnpm install --frozen-lockfile
-                                pm2 restart app.js || (pm2 start app.js && pm2 save)
+                                pm2 describe app.js > nul
+                                if %errorlevel% equ 0 (
+                                    pm2 restart app.js
+                                ) else (
+                                    pm2 start app.js
+                                )
+                                pm2 save
                             ^"
                         """
                     }
