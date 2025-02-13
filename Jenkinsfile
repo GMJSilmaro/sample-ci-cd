@@ -37,6 +37,12 @@ pipeline {
                                 Copy-Item -Destination "$env:DEPLOY_PATH" -Recurse -Force -Credential \$creds -Verbose
                         """
                         
+                        bat """
+                            ssh $env:USER@$env:WIN_IP ^"
+                                set PM2_HOME=C:\\Users\\$env:USER\\.pm2
+                                pm2 restart app.js
+                            ^"
+                            """
                         // Step 2: Install dependencies and restart app
                         bat """
                             ssh $env:USER@$env:WIN_IP ^"
