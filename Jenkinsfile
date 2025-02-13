@@ -41,7 +41,7 @@ pipeline {
                         bat """
                             ssh $env:USER@$env:WIN_IP ^"
                                 cd $env:DEPLOY_PATH
-                                set PM2_HOME=C:\\Users\\$env:USER\\.pm2
+                                set PM2_HOME=C:\\etc\\pm2
                                 pnpm install --frozen-lockfile
                                 pm2 describe app.js > nul
                                 if %errorlevel% equ 0 (
